@@ -19,3 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
+rootProject.name = "AI36"
+include(":app")
