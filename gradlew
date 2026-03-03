@@ -74,11 +74,7 @@ case "`uname`" in
     ;;
   MINGW* )
     msys=true
-    ;;
-  NONSTOP* )
-    nonstop=true
-    ;;
-esac
+
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
