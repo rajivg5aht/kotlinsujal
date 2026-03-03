@@ -229,4 +229,11 @@ fun AddProductBody(
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun ProductBodyPreview() {
+    AddProductBody(
+        selectedImageUri = null,
+        onPickImage = {}
+    )
+}
