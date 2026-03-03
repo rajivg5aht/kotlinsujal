@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#DB4444</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">AI36</string>
+    <string name="firebase_database_url" translatable="false">https://helmet-and-gears-default-rtdb.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">475474772217</string>
+    <string name="google_api_key" translatable="false">AIzaSyAQAfvjQ36G0vZSJP2cLqJPzcPEBFi1p8E</string>
+    <string name="google_app_id" translatable="false">1:475474772217:android:65edadeec7ee482ba3a228</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAQAfvjQ36G0vZSJP2cLqJPzcPEBFi1p8E</string>
+    <string name="google_storage_bucket" translatable="false">helmet-and-gears.firebasestorage.app</string>
+    <string name="project_id" translatable="false">helmet-and-gears</string>
+    <string name="title_activity_add_cart">AddCartActivity</string>
+    <string name="title_activity_add_product">AddProductActivity</string>
+    <string name="title_activity_add_to_cart">AddToCartActivity</string>
+    <string name="title_activity_address">AddressActivity</string>
+    <string name="title_activity_cart">CartActivity</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
+    <string name="title_activity_forget_password">ForgetPasswordActivity</string>
+    <string name="title_activity_list_view">ListViewActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_order">OrderActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_update_product">UpdateProductActivity</string>
+    <string name="title_activity_user_dashboard">UserDashboardActivity</string>
+    <string name="title_activity_wishlist">WishlistActivity</string>
+    <style name="Theme.AI36" parent="android:Theme.Material.Light.NoActionBar"/>
+</resources>
