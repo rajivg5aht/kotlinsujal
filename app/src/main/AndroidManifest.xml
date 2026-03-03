@@ -109,11 +109,5 @@
             android:exported="true"
             android:label="@string/title_activity_profile"
             android:theme="@style/Theme.AI36" />
-        <activity
-            android:name=".view.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AI36" />
-    </application>
 
 </manifest>
