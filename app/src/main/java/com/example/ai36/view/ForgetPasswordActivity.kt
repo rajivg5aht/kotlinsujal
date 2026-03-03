@@ -6,20 +6,15 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,13 +26,13 @@ class ForgetPasswordActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            forgetBody()
+            ForgetPasswordBody()
         }
     }
 }
 
 @Composable
-fun forgetBody() {
+fun ForgetPasswordBody() {
     val repo = remember { UserRepositoryImpl() }
     val userViewModel = remember { UserViewModel(repo) }
 
@@ -45,46 +40,64 @@ fun forgetBody() {
     val activity = context as Activity
 
     var email by remember { mutableStateOf("") }
-    Scaffold { padding ->
-        Column(
+
+    // Gradient background
+    val gradient = Brush.verticalGradient(
+        colors = listOf(Color(0xFFFFF5E1), Color(0xFFFAD689))
+    )
+
+    Scaffold(containerColor = Color.Transparent) { padding ->
+        Box(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
+                .background(gradient)
+                .padding(padding)
+                .padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
-                placeholder = {
-                    Text("abc@gmail.com")
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Button(
-                onClick = {
-                    userViewModel.forgetPassword(email) { success, message ->
-                        if (success) {
-                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                            activity?.finish()
-                        } else {
-                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .padding(top = 15.dp)
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Submit")
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = { Text("abc@gmail.com", color = Color(0xFF8B4513)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color(0xFF8B4513),
+                        unfocusedIndicatorColor = Color(0xFFD9B382),
+                        cursorColor = Color(0xFF8B4513),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    )
+                )
+                Button(
+                    onClick = {
+                        userViewModel.forgetPassword(email) { success, message ->
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                            if (success) activity.finish()
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4513))
+                ) {
+                    Text("Submit", color = Color.White)
+                }
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun prev() {
-    forgetBody()
+fun PreviewForgetPassword() {
+    ForgetPasswordBody()
 }

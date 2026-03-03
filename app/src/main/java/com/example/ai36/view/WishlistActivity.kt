@@ -1,6 +1,5 @@
 package com.example.ai36.view
 
-
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -9,10 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -26,7 +28,7 @@ import com.example.ai36.viewmodel.CartViewModel
 import com.example.ai36.viewmodel.CartViewModelFactory
 import com.example.ai36.viewmodel.WishlistViewModel
 import com.example.ai36.viewmodel.WishlistViewModelFactory
-
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 class WishlistActivity : ComponentActivity() {
     private lateinit var wishlistViewModel: WishlistViewModel
@@ -60,26 +62,33 @@ fun WishlistScreen(
     cartViewModel: CartViewModel
 ) {
     val context = LocalContext.current
-    val wishlistItems by wishlistViewModel.wishlistItems.collectAsState()
+    val wishlistItems by wishlistViewModel.wishlistItems.collectAsState(initial = emptyList())
+
+    val gradient = Brush.verticalGradient(
+        colors = listOf(Color(0xFFFFF5E1), Color(0xFFFAD689))
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Your Wishlist", fontSize = 20.sp) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFDB4444
-                ))
+                title = { Text("Your Wishlist", fontSize = 20.sp, color = Color.White) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF8B4513))
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(gradient)
                 .padding(padding)
-                .background(Color(0xFFF0F0F0))
         ) {
             if (wishlistItems.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Your wishlist is empty.")
+                    Text(
+                        "Your wishlist is empty.",
+                        color = Color(0xFF8B4513),
+                        fontSize = 18.sp
+                    )
                 }
             } else {
                 LazyColumn(
@@ -95,7 +104,13 @@ fun WishlistScreen(
                                 Toast.makeText(context, "Removed from wishlist", Toast.LENGTH_SHORT).show()
                             },
                             onAddToCart = {
-                                val cartItem = item.toCartItem()
+                                val cartItem = CartItemModel(
+                                    id = "", // Generate ID if needed
+                                    productName = item.productName,
+                                    productPrice = item.productPrice,
+                                    image = item.image,
+                                    quantity = 1
+                                )
                                 cartViewModel.addToCart(cartItem)
                                 Toast.makeText(context, "Added to cart", Toast.LENGTH_SHORT).show()
                             }
@@ -117,31 +132,28 @@ fun WishlistItemCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F2F1))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF8E7)),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = item.productName, fontSize = 18.sp, color = Color.Black)
             Text(text = "Price: Rs. ${item.productPrice}", color = Color.DarkGray)
             Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onAddToCart) {
-                    Text("Add to Cart")
+                Button(
+                    onClick = onAddToCart,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4513))
+                ) {
+                    Text("Add to Cart", color = Color.White)
                 }
-                Button(onClick = onRemove, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
-                    Text("Remove")
+                Button(
+                    onClick = onRemove,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text("Remove", color = Color.White)
                 }
             }
         }
     }
-}
-
-
-fun WishlistItemModel.toCartItem(): CartItemModel {
-    return CartItemModel(
-        id = "", // You can generate ID later or leave blank for auto generation
-        productName = this.productName,
-        productPrice = this.productPrice,
-        image = this.image,
-        quantity = 1
-    )
 }

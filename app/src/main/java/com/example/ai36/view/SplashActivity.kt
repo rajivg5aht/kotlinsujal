@@ -53,7 +53,7 @@ fun SplashBody() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(R.drawable.logo),
+                painter = painterResource(R.drawable.skill),
                 contentDescription = "App Logo"
             )
             Spacer(modifier = Modifier.height(10.dp))

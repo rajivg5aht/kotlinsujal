@@ -10,24 +10,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,23 +33,18 @@ import com.example.ai36.repository.ProductRepositoryImpl
 import com.example.ai36.viewmodel.ProductViewModel
 
 class AddProductActivity : ComponentActivity() {
-    // Make this a normal nullable Uri property
-    private var selectedImageUri: Uri? = null
 
+    private var selectedImageUri: Uri? = null
     lateinit var imageUtils: ImageUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Enable edge-to-edge content (replace your enableEdgeToEdge())
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         imageUtils = ImageUtils(this, this)
         imageUtils.registerLaunchers { uri ->
             selectedImageUri = uri
-            // To notify Compose of the new image, call setContent again or better:
-            // Use a Compose state to hold the Uri (see below)
-            // But for simplicity, we call setContent again here:
             setContent {
                 AddProductBody(
                     selectedImageUri = selectedImageUri,
@@ -82,6 +67,7 @@ fun AddProductBody(
     selectedImageUri: Uri?,
     onPickImage: () -> Unit
 ) {
+
     var productName by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
     var productDescription by remember { mutableStateOf("") }
@@ -93,12 +79,16 @@ fun AddProductBody(
     val activity = context as? Activity
 
     Scaffold { innerPadding ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+
             item {
+
+                // Image Picker Box
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,9 +96,7 @@ fun AddProductBody(
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
-                        ) {
-                            onPickImage()
-                        }
+                        ) { onPickImage() }
                         .padding(10.dp)
                 ) {
                     if (selectedImageUri != null) {
@@ -120,7 +108,7 @@ fun AddProductBody(
                         )
                     } else {
                         Image(
-                            painterResource(R.drawable.imgplchol),
+                            painter = painterResource(R.drawable.imgplchol),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -128,6 +116,9 @@ fun AddProductBody(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Product Name
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -135,9 +126,21 @@ fun AddProductBody(
                     shape = RoundedCornerShape(12.dp),
                     placeholder = { Text("Product Name") },
                     value = productName,
-                    onValueChange = { productName = it }
+                    onValueChange = { productName = it },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedIndicatorColor = Color(0xFF8B4513),
+                        unfocusedIndicatorColor = Color(0xFFD9B382),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color(0xFF8B4513)
+                    )
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Product Description
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -145,9 +148,21 @@ fun AddProductBody(
                     shape = RoundedCornerShape(12.dp),
                     placeholder = { Text("Product Description") },
                     value = productDescription,
-                    onValueChange = { productDescription = it }
+                    onValueChange = { productDescription = it },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedIndicatorColor = Color(0xFF8B4513),
+                        unfocusedIndicatorColor = Color(0xFFD9B382),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color(0xFF8B4513)
+                    )
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Product Price
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,9 +171,21 @@ fun AddProductBody(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     placeholder = { Text("Product Price") },
                     value = productPrice,
-                    onValueChange = { productPrice = it }
+                    onValueChange = { productPrice = it },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedIndicatorColor = Color(0xFF8B4513),
+                        unfocusedIndicatorColor = Color(0xFFD9B382),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color(0xFF8B4513)
+                    )
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Submit Button
                 Button(
                     onClick = {
                         if (selectedImageUri != null) {
@@ -176,7 +203,7 @@ fun AddProductBody(
                                         if (success) activity?.finish()
                                     }
                                 } else {
-                                    Log.e("Upload Error", "Failed to upload image to Cloudinary")
+                                    Log.e("Upload Error", "Failed to upload image")
                                 }
                             }
                         } else {
@@ -189,7 +216,11 @@ fun AddProductBody(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF8B4513),
+                        contentColor = Color.White
+                    )
                 ) {
                     Text("Submit")
                 }
@@ -198,11 +229,4 @@ fun AddProductBody(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ProductBodyPreview() {
-    AddProductBody(
-        selectedImageUri = null, // or pass a mock Uri if needed
-        onPickImage = {} // no-op
-    )
-}
+

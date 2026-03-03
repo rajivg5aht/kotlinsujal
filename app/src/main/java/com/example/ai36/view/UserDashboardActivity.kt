@@ -1,9 +1,11 @@
 package com.example.ai36.view
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,6 +21,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -45,16 +48,30 @@ class UserDashboardActivity : ComponentActivity() {
 
         MediaManager.init(this)
 
-        cartViewModel = ViewModelProvider(this, CartViewModelFactory(CartRepositoryImpl()))[CartViewModel::class.java]
-        wishlistViewModel = ViewModelProvider(this, WishlistViewModelFactory(WishlistRepositoryImpl))[WishlistViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(UserRepositoryImpl()))[UserViewModel::class.java]
-        orderViewModel = ViewModelProvider(this, OrderViewModelFactory(OrderRepositoryImpl()))[OrderViewModel::class.java]
+        cartViewModel =
+            ViewModelProvider(this, CartViewModelFactory(CartRepositoryImpl()))[CartViewModel::class.java]
+        wishlistViewModel =
+            ViewModelProvider(this, WishlistViewModelFactory(WishlistRepositoryImpl))[WishlistViewModel::class.java]
+        userViewModel =
+            ViewModelProvider(this, UserViewModelFactory(UserRepositoryImpl()))[UserViewModel::class.java]
+        orderViewModel =
+            ViewModelProvider(this, OrderViewModelFactory(OrderRepositoryImpl()))[OrderViewModel::class.java]
 
         setContent {
             UserDashboardBody(cartViewModel, wishlistViewModel, userViewModel, orderViewModel)
         }
     }
 }
+
+// Colors
+private val dashboardGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFFFFF5E1),
+        Color(0xFFFAD689)
+    )
+)
+private val cardColor = Color(0xFFFFF8E7)
+private val skillLinkBrown = Color(0xFF8B4513)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,16 +99,20 @@ fun UserDashboardBody(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.logo),
+                            painter = painterResource(id = R.drawable.skill),
                             contentDescription = "Logo",
-                            modifier = Modifier.size(55.dp).clip(CircleShape)
+                            modifier = Modifier.size(50.dp).clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Helmets and Gears")
+                        Text(
+                            text = "Skill Link",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFDB4444),
+                    containerColor = skillLinkBrown,
                     titleContentColor = Color.White
                 ),
                 actions = {
@@ -101,15 +122,11 @@ fun UserDashboardBody(
                         Icon(Icons.Default.Person, contentDescription = "Edit Profile", tint = Color.White)
                     }
 
-                    // Dropdown menu icon and menu
                     Box {
                         IconButton(onClick = { menuExpanded = true }) {
                             Icon(Icons.Default.MoreVert, contentDescription = "Menu", tint = Color.White)
                         }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false }
-                        ) {
+                        DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                             DropdownMenuItem(
                                 text = { Text("Address Book") },
                                 onClick = {
@@ -123,7 +140,8 @@ fun UserDashboardBody(
                                     menuExpanded = false
                                     Toast.makeText(context, "Logged out", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(context, LoginActivity::class.java)
-                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    intent.flags =
+                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     context.startActivity(intent)
                                 }
                             )
@@ -133,7 +151,7 @@ fun UserDashboardBody(
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = Color(0xFFDB4444)) {
+            NavigationBar(containerColor = skillLinkBrown) {
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
@@ -153,18 +171,30 @@ fun UserDashboardBody(
                     label = { Text("Wishlist", color = Color.White) }
                 )
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    context.startActivity(Intent(context, AddProductActivity::class.java))
+                },
+                containerColor = skillLinkBrown,
+                contentColor = Color.White
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Product")
+            }
         }
     ) { padding ->
         Column(
             Modifier
-                .padding(padding)
                 .fillMaxSize()
+                .padding(padding)
+                .background(dashboardGradient)
         ) {
             UserHeader(user = user)
 
             if (loading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = skillLinkBrown)
                 }
             } else {
                 LazyColumn(modifier = Modifier.padding(8.dp)) {
@@ -181,11 +211,24 @@ fun UserDashboardBody(
 
 @Composable
 fun UserHeader(user: com.example.ai36.model.UserModel?) {
-    Row(modifier = Modifier.padding(12.dp)) {
-        Text(
-            text = "Welcome, ${user?.firstName ?: "User"}!",
-            style = MaterialTheme.typography.titleLarge
-        )
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Welcome, ${user?.firstName ?: "User"}!",
+                style = MaterialTheme.typography.titleMedium,
+                color = skillLinkBrown
+            )
+        }
     }
 }
 
@@ -200,10 +243,9 @@ fun ProductCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFDB4444)
-        ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        shape = RoundedCornerShape(15.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             AsyncImage(
@@ -211,15 +253,16 @@ fun ProductCard(
                 contentDescription = product.productName,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(15.dp)),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.logo)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = product.productName ?: "Unnamed", color = Color.White, style = MaterialTheme.typography.titleMedium)
-            Text(text = "Rs. ${product.productPrice ?: 0}", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+            Text(text = product.productName ?: "Unnamed", color = skillLinkBrown, style = MaterialTheme.typography.titleMedium)
+            Text(text = "Rs. ${product.productPrice ?: 0}", color = skillLinkBrown, style = MaterialTheme.typography.bodyLarge)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -241,9 +284,10 @@ fun ProductCard(
                         Toast.makeText(context, "Added to cart", Toast.LENGTH_SHORT).show()
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color(0xFFDB4444)
-                    )
+                        containerColor = skillLinkBrown,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("Add to Cart")
                 }
@@ -257,11 +301,9 @@ fun ProductCard(
                     wishlistViewModel.addToWishlist(wishlistItem)
                     Toast.makeText(context, "Added to wishlist", Toast.LENGTH_SHORT).show()
                 }) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Wishlist", tint = Color.White)
+                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Wishlist", tint = skillLinkBrown)
                 }
             }
         }
     }
 }
-
-
